@@ -8,6 +8,11 @@ class User < ApplicationRecord
   has_many :shop_followers, foreign_key: :user_id
   has_many :followed_shops, through: :shop_followers, source: :shop
 
+  def self.authenticate(email, password)
+    user = find_by(email: email)
+    return user if user&.authenticate(password)
+  end
+
   # Other associations and validations
 
   def admin?
@@ -18,3 +23,8 @@ class User < ApplicationRecord
     role == 'seller'
   end
 end
+
+# {
+#     "email": "admin@example.com",
+#     "password": "admin123"
+# }

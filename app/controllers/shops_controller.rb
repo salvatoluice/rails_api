@@ -1,6 +1,6 @@
-    class ShopsController < ApplicationController
+class ShopsController < ApplicationController
+  before_action :authenticate_user! # Assuming Devise is used for authentication
   before_action :authorize_admin, except: [:index, :show]
-  before_action :set_shop, only: [:show, :edit, :update, :destroy]
 
   # GET /shops
   def index
@@ -13,18 +13,9 @@
     render json: @shop
   end
 
-  # GET /shops/new
-  def new
-    @shop = Shop.new
-  end
-
-  # GET /shops/1/edit
-  def edit
-  end
-
   # POST /shops
   def create
-    @shop = Shop.new(shop_params)
+    @shop = build_shop_for_user(user_params)
 
     if @shop.save
       render json: @shop, status: :created
@@ -55,12 +46,25 @@
   end
 
   def shop_params
-    params.require(:shop).permit(:name, :user_id)
+    params.require(:shop).permit(:name, :title, :category, :image)
+  end
+
+  def user_params
+    params.require(:shop).permit(:name, :title, :category, :image, :user_id)
+  end
+
+  def build_shop_for_user(user_params)
+    user = User.find(user_params[:user_id])
+    user.build_shop(shop_params)
   end
 
   def authorize_admin
-    unless current_user&.admin?
+    unless user_is_admin?(current_user)
       render json: { error: 'Unauthorized access' }, status: :unauthorized
     end
+  end
+
+  def user_is_admin?(user)
+    user&.admin?
   end
 end

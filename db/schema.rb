@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_21_145350) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_21_152737) do
   create_table "controllers", force: :cascade do |t|
     t.string "shop"
     t.datetime "created_at", null: false
@@ -55,6 +55,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_21_145350) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "auth_token"
+    t.index ["auth_token"], name: "index_users_on_auth_token"
   end
 
   add_foreign_key "products", "shops"
