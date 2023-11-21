@@ -16,9 +16,9 @@ class AuthenticationController < ApplicationController
     render json: { message: 'Logged out successfully' }, status: :ok
   end
 
-   def signup
+  def signup
     role = params[:role]
-    if role.present? && !['user', 'admin'].include?(role.downcase)
+    if role.present? && !['user', 'admin', 'seller'].include?(role.downcase)
       return render json: { error: 'Invalid role' }, status: :unprocessable_entity
     end
 
@@ -45,9 +45,15 @@ class AuthenticationController < ApplicationController
     signup
   end
 
+  def signup_seller
+    params[:role] = 'seller'
+    signup
+  end
+
   private
 
   def user_params
     params.permit(:full_name, :email, :phone, :role, :password, :password_confirmation)
   end
 end
+
